@@ -8,18 +8,20 @@ const organizerRoutes = require("./routes/organizerRoutes");
 
 dotenv.config();
 const app = express();
-app.use(cors()); //cross origin resource
-app.use(express.json()); //used to get the input given in json format
+
+app.use(cors());
+app.use(express.json());
 
 app.use("/api/rider", riderRoutes);
 app.use("/api/organizer", organizerRoutes);
 
-// Connect to MongoDB and start server
+const PORT = process.env.PORT || 10000;
+
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("MongoDB connected->project initiiated");
-    app.listen(process.env.PORT, () => {
-      console.log(`Server running on port ${process.env.PORT}`);
+    console.log("MongoDB connected -> project initiated");
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
     });
   })
   .catch((err) => console.error(err));
