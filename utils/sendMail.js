@@ -8,16 +8,16 @@ const sendWelcomeEmail = async (toEmail, name) => {
       pass: process.env.GMAIL_APP_PASS  // Gmail App Password
     }
   });
+const mailOptions = {
+  from: `"CaterRides" <noreply@caterrides.com>`,
+  to: toEmail,
+  subject: "🎉 Welcome to CaterRides!",
+  html: `<h3>Hi ${name},</h3>
+         <p>Thanks for joining <strong>CaterRides</strong>!</p>
+         <p>You can now apply for events and earn as a rider.</p>
+         <p>Regards,<br/>Team CaterRides</p>`
+};
 
-  const mailOptions = {
-    from: `"CaterRides" <${process.env.GMAIL_USER}>`,
-    to: toEmail,
-    subject: "🎉 Welcome to CaterRides!",
-    html: `<h3>Hi ${name},</h3>
-           <p>Thanks for joining us<strong>CaterRides</strong>!</p>
-           <p>You can now apply for events and earn as a rider.</p>
-           <p>Regards,<br/>Team CaterRides</p>`
-  };
 
   await transporter.sendMail(mailOptions);
 };
