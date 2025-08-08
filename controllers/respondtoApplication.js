@@ -56,7 +56,7 @@ const respondToApplication = async (req, res) => {
       user.earnings = earnings + price;
       user.servesCompleted += 1;
       // Decrement event vacancy
-      if (typeof event.vacancy === "number") {
+      if (typeof event.vacancies === "number") {
         if (event.vacancies> 0) {
           event.vacancies -= 1;
         } else {
