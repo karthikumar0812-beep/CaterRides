@@ -57,8 +57,8 @@ const respondToApplication = async (req, res) => {
       user.servesCompleted += 1;
       // Decrement event vacancy
       if (typeof event.vacancy === "number") {
-        if (event.vacancy > 0) {
-          event.vacancy -= 1;
+        if (event.vacancies> 0) {
+          event.vacancies -= 1;
         } else {
           return res
             .status(400)
