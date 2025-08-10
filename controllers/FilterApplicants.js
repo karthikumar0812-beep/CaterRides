@@ -1,37 +1,29 @@
 const Event = require("../models/Events");
 
-const getFilteredApplications = async (req, res) => {
-  const organizerId = req.organizer;
-  const { status } = req.query;
-
-  if (!["pending", "accepted", "rejected"].includes(status)) {
-    return res.status(400).json({ message: "Invalid status type" });
-  }
-
+const FilterApplicants = async (req, res) => {
   try {
-    const events = await Event.find({ createdBy: organizerId })
-      .populate({
-        path: "applicants.rider",
-        select: "name email phone age"
-      })
-      .select("title applicants");
+    const { eventId } = req.params;
 
-    // Filter only applicants with matching status
-    const filteredEvents = events.map(event => {
-      const filteredApplicants = event.applicants.filter(
-        applicant => applicant.status === status
-      );
-      return {
-        _id: event._id,
-        title: event.title,
-        applicants: filteredApplicants
-      };
-    }).filter(event => event.applicants.length > 0); // Remove events with no matching applicants
+    if (!eventId) {
+      return res.status(400).json({ message: "Event ID is required" });
+    }
 
-    res.status(200).json({ filteredEvents });
+    // Find event and populate rider details inside applicants
+   const event = await Event.findById(eventId).populate({
+  path: "applicants.rider",
+  select: "name email phone servesCompleted rating"
+});
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    // Send applicants with populated rider info
+    res.status(200).json({ applicants: event.applicants });
   } catch (error) {
-    console.error("Error filtering applications:", error);
-    res.status(500).json({ message: "Server error while filtering applications" });
+    console.error("Error fetching applicants:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
-module.exports = {getFilteredApplications};
+
+module.exports = { FilterApplicants };

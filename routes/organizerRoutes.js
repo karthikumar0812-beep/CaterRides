@@ -4,13 +4,13 @@ const { signupOrganizer, loginOrganizer,getOrganizerProfile } = require("../cont
 const protectOrganizer = require("../middlewares/OrganizerAuthMidware");
 const { postEvent }=require("../controllers/postEvent");
 const { respondToApplication }=require("../controllers/respondtoApplication");
-const { getFilteredApplications }=require("../controllers/FilterApplicants");
+const { FilterApplicants }=require("../controllers/FilterApplicants");
 const {OrganizerEvents }=require("../controllers/OrganizerEvents")
 router.post("/signup", signupOrganizer);
 router.post("/login", loginOrganizer);
 router.post("/post-event", protectOrganizer, postEvent);
 router.put("/event/:eventId/respond/:riderId", protectOrganizer, respondToApplication); //accept or reject application
-router.get("/applications",protectOrganizer,getFilteredApplications);
 router.get("/profile", protectOrganizer, getOrganizerProfile);
-router.get("/myevents",protectOrganizer,OrganizerEvents)
+router.get("/myevents",protectOrganizer,OrganizerEvents);
+router.get("/myapplicants/:eventId", protectOrganizer, FilterApplicants);
 module.exports = router;
