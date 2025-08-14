@@ -80,4 +80,31 @@ const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date,
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail};
+//Used for sending otp for Rider
+const sendOtpEmail = async (toEmail, otp) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,        // your Gmail address
+      pass: process.env.GMAIL_APP_PASS     // Gmail App Password
+    }
+  });
+
+  const mailOptions = {
+    from: `"CaterRides" <${process.env.GMAIL_USER}>`,
+    to: toEmail,
+    subject: "🔑 Your OTP for CaterRides Signup",
+    html: `
+      <h3>Hi there,</h3>
+      <p>Your OTP for <strong>CaterRides</strong> signup is:</p>
+      <h2 style="color: #2e86de;">${otp}</h2>
+      <p>This OTP will expire in 5 minutes.</p>
+      <p>Regards,<br/>Team CaterRides</p>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+
+module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail};

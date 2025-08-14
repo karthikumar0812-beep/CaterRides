@@ -1,3 +1,4 @@
+//This code is used for viewing the list of applicants applied to particukar event from organizer side..
 const Event = require("../models/Events");
 
 const FilterApplicants = async (req, res) => {

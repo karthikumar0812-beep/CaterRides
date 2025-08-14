@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const { signupRider, loginRider ,getRiderProfile} = require("../controllers/riderController");
+const { createOTP,signupRider, loginRider ,getRiderProfile} = require("../controllers/riderController");
 const { getAllEvents } = require("../controllers/EventController");
 const { applyToEvent }=require("../controllers/ApplicationController");
 const {protect}=require("..//middlewares/authMiddleware");
 
+//this function will generate a otp
+router.post("/send-otp",createOTP);
 // Rider Signup If api is for signup call signup
 router.post("/signup", signupRider);
 // Rider Login
