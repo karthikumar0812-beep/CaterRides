@@ -69,6 +69,7 @@ const getOrganizerProfile = async (req, res) => {
       name: organizer.name,
       phone: organizer.phone,
       email: organizer.email,
+      organizationName: organizer.organizationName,
       eventsPosted,
     });
   } catch (error) {

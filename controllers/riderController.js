@@ -15,7 +15,7 @@ const generateToken = (id) => {
 //-------------------------------------SIGNUP-----------------------------------------------
 //This is a signuprider function
 // @desc    Send OTP to Rider Email
-// @route   POST /api/rider/send-otp-email
+// @route   POST /api/rider/send-otp-emailgo
 
 //This function will create OTP
 const createOTP = async (req, res) => {
