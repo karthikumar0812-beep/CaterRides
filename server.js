@@ -11,7 +11,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000", // React app domain
+    origin: [
+    "http://localhost:3000", // for local dev
+    "https://caterrides-frontend.vercel.app" // for deployed frontend
+  ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
