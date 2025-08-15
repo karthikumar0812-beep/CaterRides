@@ -4,7 +4,7 @@ const getAllEvents = async (req, res) => {
     console.log("🔍 Fetching all events in ascending order...");
     const events = await Event.find()
       .populate("createdBy", "name email")
-      .sort({ eventDate: 1 }); // 1 for ascending, -1 for descending
+      .sort({ date: 1 }); // 1 for ascending, -1 for descending
 
     res.status(200).json(events);
   } catch (error) {
