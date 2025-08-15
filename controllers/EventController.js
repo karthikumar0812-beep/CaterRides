@@ -1,3 +1,4 @@
+const Event= require("../models/Events");
 const getAllEvents = async (req, res) => {
   try {
     console.log("🔍 Fetching all events in ascending order...");
