@@ -11,3 +11,4 @@ const getAllEvents = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch events" });
   }
 };
+module.exports = { getAllEvents };
