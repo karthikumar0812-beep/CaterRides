@@ -5,7 +5,9 @@ const protectOrganizer = require("../middlewares/OrganizerAuthMidware");
 const { postEvent }=require("../controllers/postEvent");
 const { respondToApplication }=require("../controllers/respondtoApplication");
 const { FilterApplicants }=require("../controllers/FilterApplicants");
-const {OrganizerEvents }=require("../controllers/OrganizerEvents")
+const {OrganizerEvents }=require("../controllers/OrganizerEvents");
+const { UpdateEvent }=require("../controllers/UpdateEvent");
+const { Eventdetails } = require("../controllers/Eventdetails");
 router.post("/signup", signupOrganizer);
 router.post("/login", loginOrganizer);
 router.post("/post-event", protectOrganizer, postEvent);
@@ -13,4 +15,6 @@ router.put("/event/:eventId/respond/:riderId", protectOrganizer, respondToApplic
 router.get("/profile", protectOrganizer, getOrganizerProfile);
 router.get("/myevents",protectOrganizer,OrganizerEvents);
 router.get("/myapplicants/:eventId", protectOrganizer, FilterApplicants);
+router.put("/updateevent/:eventId", protectOrganizer, UpdateEvent);
+router.get("/eventdetails/:eventId",protectOrganizer,Eventdetails);
 module.exports = router;
