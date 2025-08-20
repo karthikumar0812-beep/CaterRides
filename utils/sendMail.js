@@ -106,5 +106,54 @@ const sendOtpEmail = async (toEmail, otp) => {
   await transporter.sendMail(mailOptions);
 };
 
+//update notification
+// update notification
+const updateNotification = async (event) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASS
+      }
+    });
 
-module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail};
+    const confirmed = event.applicants.filter(a => a.status === "accepted");
+
+    for (const applicant of confirmed) {
+      const mailOptions = {
+        from: `"CaterRides" <${process.env.GMAIL_USER}>`,
+        to: applicant.rider.email,   // ✅ use rider instead of user
+        subject: `🔔 Update on Event: ${event.title}`,
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <h2 style="color: #4CAF50;">Event Update Notification</h2>
+            <p>Hello <b>${applicant.rider.name || "Participant"}</b>,</p>
+            <p>We wanted to let you know that the event you’ve confirmed for has been <b>updated</b>:</p>
+            
+            <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; margin: 10px 0; border: 1px solid #ddd;">
+              <p><b>Event:</b> ${event.title}</p>
+            </div>
+            
+            <p>Please log in to your CaterRides dashboard for more details.</p>
+            
+            <p style="margin-top:20px;">Best regards,<br/>
+            <b>CaterRides Team</b></p>
+            
+            <hr style="border:none; border-top:1px solid #eee; margin:20px 0;" />
+            <p style="font-size: 12px; color: #777;">
+              This is an automated message. Please do not reply directly to this email.
+            </p>
+          </div>
+        `
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+  } catch (err) {
+    console.error("Update notification error:", err);
+  }
+};
+
+
+module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail,updateNotification};

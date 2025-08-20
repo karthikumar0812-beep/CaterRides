@@ -1,20 +1,23 @@
 const Event = require("../models/Events");
+const { updateNotification } = require("../utils/sendMail");
 
 const UpdateEvent = async (req, res) => {
   try {
-    const { eventId } = req.params; // take id from URL param
+    const { eventId } = req.params;
     const updates = req.body;
 
-    // find and update event only if organizer matches
     const event = await Event.findOneAndUpdate(
-      { _id: eventId, createdBy: req.organizer.id },  // ✅ corrected field
+      { _id: eventId, createdBy: req.organizer.id },
       updates,
       { new: true, runValidators: true }
-    );
+    ).populate("applicants.rider");  // to access emails
 
     if (!event) {
       return res.status(404).json({ message: "Event not found" });
     }
+
+    
+    await updateNotification(event);
 
     res.json({
       message: "Event updated successfully",
