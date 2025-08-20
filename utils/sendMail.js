@@ -154,6 +154,61 @@ const updateNotification = async (event) => {
     console.error("Update notification error:", err);
   }
 };
+//notification for deleted event
+
+const sendDeleteEventMail = async (applicants, event) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail", 
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASS
+      },
+    });
+
+    for (let applicantEmails of applicants) {
+      const mailOptions = {
+        from: `"CaterRides Team" <${process.env.GMAIL_USER}>`, // ✅ fixed
+        to: applicantEmails,
+        subject: `Update: "${event.title}" is Cancelled`,
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height:1.6; padding:20px; color:#333;">
+            <h2 style="color:#e63946;">Event Update from CaterRides</h2>
+            <p>Dear <b>Rider</b>,</p>
+            <p>We regret to inform you that the event <b>"${event.title}"</b>, 
+            originally scheduled for <b>${new Date(event.date).toLocaleDateString()}</b> at <b>${event.location}</b>, 
+            has been <span style="color:#e63946; font-weight:bold;">cancelled</span> by the organizer.</p>
+            
+            <p style="margin-top:15px;">We truly appreciate your interest and application. 
+            We know this may come as disappointing news, but don’t worry — 
+            many exciting events are coming up soon on <b>CaterRides</b>.</p>
+
+            <div style="margin:20px 0; text-align:center;">
+              <a href="https://caterrides.com/events" 
+                 style="background:#457b9d; color:#fff; padding:12px 20px; border-radius:6px; 
+                        text-decoration:none; font-weight:bold;">
+                Explore Upcoming Events
+              </a>
+            </div>
+
+            <p>If you have any questions, feel free to reply to this email. 
+            Our team is here to help!</p>
+
+            <p style="margin-top:25px;">Warm regards,<br>
+            <b>The CaterRides Team</b></p>
+
+            <hr style="margin-top:30px;">
+            <p style="font-size:12px; color:#777;">You’re receiving this email because you applied to an event on CaterRides.</p>
+          </div>
+        `,
+      };
+
+      await transporter.sendMail(mailOptions);
+    }
+  } catch (error) {
+    console.error("Error sending delete event mail:", error);
+  }
+};
 
 
-module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail,updateNotification};
+module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail,updateNotification,sendDeleteEventMail};
