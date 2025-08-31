@@ -1,14 +1,16 @@
-// install dependencies first:
 // npm install mongoose @faker-js/faker
 
 const mongoose = require("mongoose");
 const { faker } = require("@faker-js/faker");
 
-// ✅ MongoDB connection
-mongoose.connect("mongodb://localhost:27017/caterrides", {
+// ✅ Replace <username>, <password>, <cluster-url> with your Atlas credentials
+const MONGO_URI = "mongodb+srv://karthikumar0812:karthi%402005@cluster0.qbad6xz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
+})
+  .then(() => console.log("✅ Connected to MongoDB Atlas"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 const eventSchema = new mongoose.Schema(
   {
@@ -33,17 +35,22 @@ const Event = mongoose.model("Event", eventSchema);
 
 async function seedEvents() {
   console.log("🗑️ Deleting old events...");
-  await Event.deleteMany({}); // <-- deletes all existing events
+  await Event.deleteMany({}); // delete all existing events
 
-  console.log("🌱 Seeding 10,000 events...");
+  console.log("🌱 Seeding 1,000 events for tomorrow...");
 
-  let events = [];
+  // UTC midnight tomorrow
+  const tomorrow = new Date();
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  tomorrow.setUTCHours(0, 0, 0, 0);
 
-  for (let i = 0; i < 10000; i++) {
+  const events = [];
+
+  for (let i = 0; i < 1000; i++) {
     events.push({
       title: faker.lorem.words(2),
       location: faker.location.city(),
-      date: faker.date.future(),
+      date: tomorrow,
       vacancies: faker.number.int({ min: 1, max: 20 }),
       negotiatePrice: faker.number.int({ min: 100, max: 1000 }),
       description: faker.lorem.sentence(),
@@ -51,18 +58,14 @@ async function seedEvents() {
       applicants: [
         {
           rider: new mongoose.Types.ObjectId(),
-          status: faker.helpers.arrayElement([
-            "pending",
-            "accepted",
-            "rejected",
-          ]),
+          status: faker.helpers.arrayElement(["pending", "accepted", "rejected"]),
         },
       ],
     });
   }
 
   await Event.insertMany(events);
-  console.log("✅ Inserted 10,000 fresh events!");
+  console.log("✅ Inserted 1,000 events into Atlas!");
   mongoose.connection.close();
 }
 

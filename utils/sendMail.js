@@ -13,7 +13,7 @@ const mailOptions = {
   to: toEmail,
   subject: "🎉 Welcome to CaterRides!",
   html: `<h3>Hi ${name},</h3>
-         <p>Thanks for joining <strong>CaterRides</strong>!</p>
+         <p>Thanks for joining in<strong>CaterRides</strong>!</p>
          <p>You can now apply for events and earn as a rider.</p>
          <p>Regards,<br/>Team CaterRides</p>`
 };
@@ -36,10 +36,10 @@ const confirmationMail=async (toEmail, name) => {
     to: toEmail,
     subject: "🎉 Registered successfully for an Event!",
     html: `<h3>Hi ${name},</h3>
-           <p>Thanks for Register for event in CaterRides<strong>CaterRides</strong>!</p>
+           <p>Thanks for Register for event in <strong>CaterRides</strong>!</p>
            <p>For Further info please contact the Organizer via gmail or phone,You can check your status by mail or website dasboard</p>
            <p>Keep in contact with us for further info</p>
-           <p>Have a happy ride :)</p>
+           <p>This mail confirm that you successfully registered for an Event in caterRides</p>
             <p>Regards,<br/>Team CaterRides</p>`
   };
 
