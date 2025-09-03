@@ -48,26 +48,45 @@ const confirmationMail=async (toEmail, name) => {
 
 const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date, time, place) => {
   const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASS
-  }
-});
-  const statusText = status === "accepted" ? "✅ Accepted" : "❌ Rejected";
-
-  const htmlContent = `
-    <h3>Hi ${name},</h3>
-    <p>Your application for the event <strong>${eventName}</strong> has been <strong>${statusText}</strong>.</p>
-    ${
-      status === "accepted"
-        ? `<p><strong>Event Details:</strong><br/>
-           📅 Date: ${date}<br/>
-           🕒 Time: ${time}<br/>
-           📍 Location: ${place}</p>`
-        : "<p>Thank you for applying. Keep checking for other upcoming events!</p>"
+    service: "gmail",
+    auth: {
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASS
     }
-    <p>Regards,<br/>Team CaterRides</p>
+  });
+
+  const statusText = status === "accepted" 
+  ? `<span style="color:green; font-weight:bold;">&#9989; Accepted</span>`  // ✅ 
+  : `<span style="color:red; font-weight:bold;">&#10060; Rejected</span>`;  // ❌ 
+
+  // HTML email body
+  const htmlContent = `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <h3>Hi ${name},</h3>
+      <p>Your application for the event <strong>${eventName}</strong> has been <strong>${statusText}</strong>.</p>
+      ${
+        status === "accepted"
+          ? `
+            <p><strong>Event Details:</strong></p>
+            <table style="border-collapse: collapse; width: 100%; max-width: 400px;">
+              <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">📅 Date</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${date || "TBA"}</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">🕒 Time</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${time || "TBA"}</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">📍 Location</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${place || "TBA"}</td>
+              </tr>
+            </table>
+          `
+          : "<p>Thank you for applying. Keep checking for other upcoming events!</p>"
+      }
+      <p>Regards,<br/>Team CaterRides</p>
+    </div>
   `;
 
   const mailOptions = {
@@ -79,6 +98,7 @@ const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date,
 
   await transporter.sendMail(mailOptions);
 };
+
 
 //Used for sending otp for Rider
 const sendOtpEmail = async (toEmail, otp) => {
