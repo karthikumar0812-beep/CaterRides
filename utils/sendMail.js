@@ -55,11 +55,33 @@ const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date,
     }
   });
 
-  const statusText = status === "accepted" 
-  ? `<span style="color:green; font-weight:bold;">&#9989; Accepted</span>`  // ✅ 
-  : `<span style="color:red; font-weight:bold;">&#10060; Rejected</span>`;  // ❌ 
+  // Format date from MongoDB ISO format
+  const formattedDate = date
+    ? new Date(date).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })
+    : "TBA";
 
-  // HTML email body
+  // Format time if provided
+  const formattedTime = time
+    ? new Date(time).toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      })
+    : "TBA";
+
+  // Status (for body, with green/red tick)
+  const statusText = status === "accepted" 
+    ? `<span style="color:green; font-weight:bold;">&#9989; Accepted</span>`  // ✅
+    : `<span style="color:red; font-weight:bold;">&#10060; Rejected</span>`;  // ❌
+
+  // Subject (plain text only, no HTML)
+  const subjectStatus = status === "accepted" ? "Accepted" : "Rejected";
+
+  // HTML content
   const htmlContent = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
       <h3>Hi ${name},</h3>
@@ -70,15 +92,15 @@ const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date,
             <p><strong>Event Details:</strong></p>
             <table style="border-collapse: collapse; width: 100%; max-width: 400px;">
               <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">📅 Date</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${date || "TBA"}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;"> Date</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${formattedDate}</td>
               </tr>
               <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">🕒 Time</td>
-                <td style="border: 1px solid #ddd; padding: 8px;">${time || "TBA"}</td>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;"> Time</td>
+                <td style="border: 1px solid #ddd; padding: 8px;">${formattedTime}</td>
               </tr>
               <tr>
-                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;">📍 Location</td>
+                <td style="border: 1px solid #ddd; padding: 8px; font-weight: bold;"> Location</td>
                 <td style="border: 1px solid #ddd; padding: 8px;">${place || "TBA"}</td>
               </tr>
             </table>
@@ -92,7 +114,7 @@ const sendOrganizerResponseMail = async (toEmail, name, eventName, status, date,
   const mailOptions = {
     from: `"CaterRides" <${process.env.GMAIL_USER}>`,
     to: toEmail,
-    subject: `Your Application for ${eventName} is ${statusText}`,
+    subject: `Your Application for ${eventName} is ${subjectStatus}`,
     html: htmlContent
   };
 
