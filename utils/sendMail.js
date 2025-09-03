@@ -252,5 +252,58 @@ const sendDeleteEventMail = async (applicants, event) => {
   }
 };
 
+// Transporter setup
 
-module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail,updateNotification,sendDeleteEventMail};
+ const forgotPasswordOTP= async (to, otp) => {
+  try {
+    const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.GMAIL_USER,       // your Gmail
+    pass: process.env.GMAIL_APP_PASS   // Gmail App Password
+  }
+   });
+
+    const subject = "CaterRides - Password Reset Verification Code";
+
+    // Plain text fallback
+    const text = `Your CaterRides verification code is ${otp}. It will expire in 5 minutes.`;
+
+    // HTML template
+    const html = `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333;">
+        <h2 style="color: #007BFF;">CaterRides Password Reset</h2>
+        <p>Dear User,</p>
+        <p>We received a request to reset your password. Please use the verification code below to proceed:</p>
+        <div style="margin: 20px 0; text-align: center;">
+          <span style="font-size: 28px; font-weight: bold; color: #d9534f; letter-spacing: 4px;">
+            ${otp}
+          </span>
+        </div>
+        <p>This code will expire in <strong>5 minutes</strong>. If you did not request this change, you can safely ignore this email.</p>
+        <br />
+        <p>Best regards,</p>
+        <p><strong>CaterRides Support Team</strong></p>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: `"CaterRides Support" <${process.env.GMAIL_USER}>`,
+      to,
+      subject,
+      text,
+      html
+    });
+
+    console.log("✅ OTP Mail sent to:", to);
+  } catch (err) {
+    console.error("❌ OTP Mail sending failed:", err);
+    throw new Error("OTP mail sending failed");
+  }
+};
+
+
+
+
+
+module.exports = {sendWelcomeEmail,confirmationMail,sendOrganizerResponseMail,sendOtpEmail,updateNotification,sendDeleteEventMail,forgotPasswordOTP};
