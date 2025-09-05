@@ -8,7 +8,8 @@ const postEvent = async (req, res) => {
       date,
       vacancies,
       negotiatePrice,
-      description
+      description,
+      autoAccept 
     } = req.body;
 
     // Create new Event and assign organizer ID from middleware
@@ -20,6 +21,7 @@ const postEvent = async (req, res) => {
       negotiatePrice,
       description,
       createdBy: req.organizer._id, // Comes from organizerAuthMiddleware
+      autoAccept, 
       applicants: [] // initially empty
     });
 

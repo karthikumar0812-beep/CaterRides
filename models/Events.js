@@ -27,6 +27,7 @@ const eventSchema = new mongoose.Schema({
     ref: "Organizer", 
     required: true
   },
+  autoAccept: { type: Boolean, default: false },
   applicants: [
     {
       rider: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

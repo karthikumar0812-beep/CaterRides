@@ -1,6 +1,6 @@
 const Event = require("../models/Events");
 const User = require("../models/User");
-const { confirmationMail } = require("../utils/sendMail");
+const { confirmationMail, sendOrganizerResponseMail } = require("../utils/sendMail");
 
 const applyToEvent = async (req, res) => {
   try {
@@ -40,22 +40,53 @@ const applyToEvent = async (req, res) => {
       });
     }
 
+    // 3️⃣ Check if vacancies available
+    if ((event.vacancies ?? 0) <= 0) {
+      return res.status(400).json({ message: "No vacancies left for this event" });
+    }
+
+    // 4️⃣ Determine status (auto-accept or pending)
+    const status = event.autoAccept ? "accepted" : "pending";
+
     // ✅ Add to event applicants
-    event.applicants.push({ rider: userId, status: "pending" });
+    event.applicants.push({ rider: userId, status });
+
+    // If auto-accepted, update immediately
+    if (status === "accepted") {
+      const price = Number(event.negotiatePrice) || 0;
+      user.earnings = (Number(user.earnings) || 0) + price;
+      user.servesCompleted += 1;
+      event.vacancies = Math.max(0, (event.vacancies || 0) - 1);
+
+      await sendOrganizerResponseMail(
+        user.email,
+        user.name,
+        event.title,
+        "accepted",
+        event.date,
+        event.time,
+        event.location
+      );
+    }
+
     await event.save();
 
-    // ✅ Add to user’s appliedEvents
+    // ✅ Add to user’s appliedEvents (use correct status)
     user.appliedEvents.push({
       eventId: event._id,
-      status: "pending",
+      status,
       appliedAt: new Date()
     });
     await user.save();
 
-    // Send confirmation email
+    // Rider always gets confirmation mail
     await confirmationMail(user.email, user.name);
 
-    res.status(200).json({ message: "Successfully applied to event" });
+    res.status(200).json({
+      message: status === "accepted"
+        ? "Successfully applied and auto-accepted"
+        : "Successfully applied (pending approval)"
+    });
   } catch (error) {
     console.error("Apply error:", error);
     res.status(500).json({ message: "Internal server error" });
