@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const riderRoutes = require("./routes/RiderRoutes");
 const organizerRoutes = require("./routes/organizerRoutes");
+const chatRoutes = require("./routes/chatRoutes");
 
 dotenv.config();
 const app = express();
@@ -24,6 +25,7 @@ app.use(express.json());
 
 app.use("/api/rider", riderRoutes);
 app.use("/api/organizer", organizerRoutes);
+app.use("/api/chats", chatRoutes);
 
 const PORT = process.env.PORT || 10000;
 
