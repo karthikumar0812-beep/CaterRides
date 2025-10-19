@@ -8,6 +8,7 @@ const { Eventinfo }=require("../controllers/Eventinfo");
 const {forgotPasswordVerify,resetPassword}=require("../controllers/Forgot-password");
 const {protect}=require("..//middlewares/authMiddleware");
 
+
 //this function will generate a otp
 router.post("/send-otp",createOTP);
 // Rider Signup If api is for signup call signup
